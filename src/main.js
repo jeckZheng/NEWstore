@@ -8,6 +8,11 @@ import goodsInfo from './components/goodsInfo.vue';
 import buyCar from './components/buyCar.vue';
 import payOrder from './components/payOrder.vue';
 import login from './components/login.vue';
+import orderInfo from './components/orderInfo.vue';
+import paySuccess from './components/paySuccess.vue';
+import memberCenter from './components/memberCenter.vue';
+import lookOrder from './components/lookOrder.vue';
+
 // 导入ui框架
 import ElementUI from "element-ui";
 // 导入css
@@ -78,14 +83,44 @@ const router = new VueRouter({
     },
     // 订单支付路由
     {
-      path:"/payOrder",
-      component:payOrder
+      path:"/payOrder/:ids",
+      component:payOrder,
+       // 路由元信息
+       meta: { checkLogin: true }
     },
     // 登陆路由
     {
       path:'/login',
       component:login
-    }
+    },
+     // 订单详情路由
+     {
+      path:"/orderInfo/:orderid",
+      component:orderInfo,
+       // 路由元信息
+       meta: { checkLogin: true }
+    },
+    //购买成功页
+     {
+      path:"/paySuccess",
+      component:paySuccess,
+       // 路由元信息
+       meta: { checkLogin: true }
+    },
+    //会员中心页
+    {
+      path:"/memberCenter",
+      component:memberCenter,
+       // 路由元信息
+       meta: { checkLogin: true }
+    },
+    //订单详情页
+    {
+      path:"/lookOrder/:orderId",
+      component:lookOrder,
+       // 路由元信息
+       meta: { checkLogin: true }
+    },
   ]
 });
 
@@ -165,7 +200,7 @@ router.beforeEach((to, from, next) => {
   store.commit('saveFromPath',from.path);
 
   // from 从哪来 to 去哪里 next()下一个
-  if(to.path=='/payOrder'){
+  if(to.meta.checkLogin){
     // 判断
     axios.get("/site/account/islogin")
     .then(response=>{
@@ -197,7 +232,21 @@ new Vue({
   // 渲染 App组件
   render: h => h(App),
   // 挂载仓库
-  store
+  store,
+  // 生命周期函数
+  beforeCreate() {
+    // console.log('app-beforeCreate');
+    axios
+      .get("/site/account/islogin")
+      .then(response => {
+        // console.log(response);
+        // if(response.data.code=='logined')
+        store.state.isLogin = response.data.code == "logined";
+      })
+      .catch(err => {
+        // console.log(err);
+      });
+  },
 });
 
 // 注册一些逻辑

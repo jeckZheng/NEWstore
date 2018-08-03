@@ -105,9 +105,10 @@
                     <div class="cart-foot clearfix">
                         <div class="right-box">
                             <button class="button" onclick="javascript:location.href='/index.html';">继续购物</button>
-                            <router-link to="/payOrder">
+                            <!-- <router-link to="/payOrder">
                                 <button class="submit">立即结算</button>
-                            </router-link>
+                            </router-link> -->
+                            <button @click="toPayOrder" class="submit">立即结算</button>
                         </div>
                     </div>
                     <!--购物车底部-->
@@ -206,6 +207,27 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    toPayOrder(){
+        let ids="";
+        this.message.forEach(v => {
+            if(v.isSelected){
+                ids+=v.id;
+                ids+=','
+            }
+        });
+         if(ids==''){
+            // 一个都没选
+            this.$message({
+                message:'哥们,你起码选一个呀!!',
+                duration:1000
+            });
+            return;
+        }
+         // 切掉,
+       ids = ids.slice(0,-1);
+        // 跳转地址
+        this.$router.push('/payOrder/'+ids);
     }
   }
 };
